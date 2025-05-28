@@ -1389,7 +1389,7 @@ GROUP BY lu.name;
 <details>
 <summary> Potential Write Up </summary>
 
-There are 3 active programs the office is offering include Intensive Relief, Speedy Recovery, Theft Counseling. Intensive Relief and Speedy Recovery are programs for those facing drug charges and both are offered by hope treatments. Theft counseling serves those facing theft charges and is offered by Counseling Star. All of these programs were piloted starting on Jan 1, 2025. ReEnter is not currently active, but it will serve those facign assault charges. 
+There are 3 active programs the office is offering include Intensive Relief, Speedy Recovery, Theft Counseling. Intensive Relief and Speedy Recovery are programs for those facing drug charges and both are offered by hope treatments. Theft counseling serves those facing theft charges and is offered by Counseling Star. All of these programs were piloted starting on Jan 1, 2025. ReEnter is not currently active, but it will serve those facing assault charges. 
 
 So far, 10 people were referred to Intensive Relief, 13 were referred to Speedy Recovery, and 5 were referred to theft counseling. 
 
@@ -1647,11 +1647,6 @@ Thank you students and thank you for your support Afsana and Jason!
 <br>
 Students, If I can be of help to you in any way don't hesitate to reach out: dylancomerford1@gmail.com 
 
----
-
-git add .
-git commit -m "Update README for class 3"
-git push origin main
 
 
 

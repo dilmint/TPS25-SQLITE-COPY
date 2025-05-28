@@ -1088,8 +1088,6 @@ GROUP BY ____;
 </details>
 
 
-<details>
-
 <br>
 
 ex. 
@@ -1163,7 +1161,7 @@ GROUP BY lu.name;
 
 
 
-### 5.⭐️ Optional Analysis (Challenge)
+### 5.⭐️ Extra Analysis (Take from here or create your own)
 - What can we tell about the population who chose not to complete the program? 
 - Both Intensive Relief and Speedy Recovery target those with drug charges. What makes these programs different? Which is "better"?
 
