@@ -1646,8 +1646,3 @@ Using ChatGPT: In my experience ChatGPT won't always give you the most efficient
 Thank you students and thank you for your support Afsana and Jason! 
 <br>
 Students, If I can be of help to you in any way don't hesitate to reach out: dylancomerford1@gmail.com 
-
-
-
-
-
