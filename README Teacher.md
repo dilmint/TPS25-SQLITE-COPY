@@ -1321,8 +1321,7 @@ GROUP BY lu.name, l.topcharge;
 
 # Analytics Project 
 
-<pre>Scenario: Your office has launched multiple diversion program pilots. Leadership wants a summary of how these programs are performing and who they’re reaching. Your job is to query the database and create a short, clear report that answers the questions below.
-</pre>
+**Scenario: Your office has launched multiple diversion program pilots. Leadership wants a summary of how these programs are performing and who they’re reaching. Your job is to query the database and create a short, clear report that answers the questions below.**
 
 Instructions: 
 - You will create an analytical report that follows the structure below. You must answer the questions under each heading and please also add one of your own takeaways. 
@@ -1355,19 +1354,10 @@ TABLES:
 
 ### 1. 🧾 Program Overview
 
-ex. 
-When I run the following query: 
-```sql 
-SELECT * FROM programminglu;
-```
-I cans start to write the following takeaway: 
-The 4 programs the offcie is offering include Intensive Relief, Speedy Recovery, Theft Counseling, and ReEnter. Intensive Relief and Speedy Recovery are 2 distinct programs for those facing drug charges and both are offered by hope treatments... 
-
 - What are the programs? 
 - When did each of them start? 
 - What charge must a person have to be eligible for each program? 
 - How many people have been referred to each program? 
-- Along with the charge a participant MUST have to be eligible for a program, what are other common charges people in these programs are facing?
       
 <details>
 <summary>💡 Starter queries</summary>
@@ -1375,9 +1365,9 @@ The 4 programs the offcie is offering include Intensive Relief, Speedy Recovery,
 ```sql
 SELECT * FROM programmingLU;
 
-SELECT programluid, COUNT(*) 
+SELECT ____, COUNT(*) 
 FROM programming 
-GROUP BY programluid;
+GROUP BY ____;
 ```
 </details>
 
@@ -1388,11 +1378,6 @@ GROUP BY programluid;
 ```sql 
 SELECT * FROM programmingLU;
 
-SELECT lu.name AS program_name, l.topcharge, COUNT(DISTINCT p.personid) AS person_count
-FROM programming p
-JOIN legalall l ON l.personid = p.personid
-JOIN programmingLU lu ON lu.programluid = p.programluid
-GROUP BY lu.name, l.topcharge;
 
 SELECT lu.name, COUNT(*) AS num_referrals
 FROM programming p
@@ -1404,28 +1389,34 @@ GROUP BY lu.name;
 <details>
 <summary> Potential Write Up </summary>
 
-The 4 pilot programs launched by the office include Intensive relief, which serves 
+There are 3 active programs the office is offering include Intensive Relief, Speedy Recovery, Theft Counseling. Intensive Relief and Speedy Recovery are programs for those facing drug charges and both are offered by hope treatments. Theft counseling serves those facing theft charges and is offered by Counseling Star. All of these programs were piloted starting on Jan 1, 2025. ReEnter is not currently active, but it will serve those facign assault charges. 
 
-Along with the eligibility charges, there are also the following other common charges, which suggests the need for a winder ranging list of services avalible to participants, who may have more complex needs. 
+So far, 10 people were referred to Intensive Relief, 13 were referred to Speedy Recovery, and 5 were referred to theft counseling. 
 
 </details>
+
+<br>
+
+ex. 
+When I run the following query: 
+
+```sql 
+SELECT * FROM programminglu;
+```
+
+I can start to write the following takeaway: 
+The programs the office is offering include Intensive Relief, Speedy Recovery, Theft Counseling, and ReEnter. Intensive Relief and Speedy Recovery are 2 distinct programs for those facing drug charges and both are offered by hope treatments... 
 
 ### 2. 👥 Participant Demographics
 - What is the racial breakdown of participants in each program?
 - What is the gender breakdown?
-- What is the average age per program? -- Hint: use AVG() instead of COUNT()
+- What is the average age per program? -- Hint: use AVG() instead of COUNT() in the same format
 
 <details> <summary>💡 Starter queries</summary>
 
 ```sql
-SELECT programluid, race, COUNT(*) 
-FROM programming p
-JOIN demographics d ON p.personid = d.personid
-GROUP BY programluid, race;
-
 SELECT programluid, AVG(age)
-FROM programming p
-JOIN demographics d ON p.personid = d.personid
+...
 GROUP BY programluid;
 ```
 </details>
@@ -1433,11 +1424,11 @@ GROUP BY programluid;
 <details> <summary>Answer queries</summary>
 
 ```sql
-SELECT lu.name, d.race, COUNT(*) AS num_people
+SELECT lu.name, race, COUNT(*) 
 FROM programming p
 JOIN demographics d ON p.personid = d.personid
-JOIN programmingLU lu ON p.programluid = lu.programluid
-GROUP BY lu.name, d.race;
+JOIN programminglu lu ON p.programluid = lu.programluid
+GROUP BY lu.programluid, race;
 
 SELECT lu.name, d.gender, COUNT(*) AS num_people
 FROM programming p
@@ -1453,102 +1444,158 @@ GROUP BY lu.name;
 ```
 </details>
 
+<details>
+<summary> Potential Write Up </summary>
+
+Intensive Relief <br>
+Of the 10 individuals referred to Intensive Relief, a majority were white (60%) and predominantly male (70%). The average age of participants was 32.
+<br>
+Speedy Recovery<br>
+Among the 13 people referred to Speedy Recovery, the majority were Black (30%) or Other/Hispanic (30%). The group was also largely male (77%), with an average age of 31.
+<br>
+Theft Counseling<br>
+Of the 5 participants referred to Theft Counseling, 40% were white and 40% were Other/Hispanic. The group was primarily male (80%) and had a notably higher average age of 41.
+
+</details>
+
 ### 3. ⚖️ Legal Background
-- What is the average number of legal events per participant, per program?
-- What are the most common top charges among people in each program?
+- What is the range of the number of legal events participants in each program has (between x and y legal events)?
+- How many people referred to any program had 5 legal events?
+- Along with the charge a participant MUST have to be eligible for a program, what are other common charges people in these programs are facing? 
 
 <details> <summary>💡 Starter queries</summary>
 
 ```sql
--- Count legal events per person
-SELECT personid, COUNT(*) AS num_events
-FROM legalall
-GROUP BY personid;
+SELECT p.personid, lu.name, COUNT(l.legaleventid) AS num_events
+...
+GROUP BY lu.name, p.personid;
 
--- Join to program table and get avg
-SELECT programluid, AVG(num_events)
-FROM (
-  SELECT personid, COUNT(*) AS num_events
-  FROM legalall
-  GROUP BY personid
-) l
-JOIN programming p ON l.personid = p.personid
-GROUP BY programluid;
+....
+HAVING COUNT(l.legaleventid) = 5;
+
+
+SELECT lu.name AS program_name, l.topcharge, COUNT(DISTINCT p.personid) AS person_count
+FROM programming p
+JOIN legalall l ON l.personid = p.personid
+JOIN programmingLU lu ON lu.programluid = p.programluid
+GROUP BY lu.name, l.topcharge; 
 ```
 </details>
 
 <details> <summary>Answer queries</summary>
 
 ```sql
-SELECT lu.name, AVG(event_counts.num_events) AS avg_legal_events
-FROM (
-  SELECT personid, COUNT(*) AS num_events
-  FROM legalall
-  GROUP BY personid
-) AS event_counts
-JOIN programming p ON event_counts.personid = p.personid
-JOIN programmingLU lu ON p.programluid = lu.programluid
-GROUP BY lu.name;
-
-SELECT lu.name, l.topcharge, COUNT(*) AS num_cases
+SELECT p.personid, lu.name, COUNT(l.legaleventid) AS num_events
 FROM programming p
 JOIN legalall l ON p.personid = l.personid
-JOIN programmingLU lu ON p.programluid = lu.programluid
-GROUP BY lu.name, l.topcharge
-ORDER BY lu.name, num_cases DESC;
+JOIN programminglu lu ON p.programluid = lu.programluid
+GROUP BY lu.name, p.personid;
+
+SELECT COUNT(DISTINCT p.personid) AS num_people_with_multiple_events
+FROM programming p
+JOIN legalall l ON p.personid = l.personid
+GROUP BY p.personid
+HAVING COUNT(l.legaleventid) = 5;
+
+--below is a subquery (we didn;t get a chance to cover this, but it makes the above more efficient)
+SELECT COUNT(*) 
+FROM (
+  SELECT p.personid
+  FROM programming p
+  JOIN legalall l ON p.personid = l.personid
+  GROUP BY p.personid
+  HAVING COUNT(l.legaleventid) = 5
+);
+
+SELECT lu.name AS program_name, l.topcharge, COUNT(DISTINCT p.personid) AS person_count
+FROM programming p
+JOIN legalall l ON l.personid = p.personid
+JOIN programmingLU lu ON lu.programluid = p.programluid
+GROUP BY lu.name, l.topcharge; 
 ```
+</details>
+
+
+<details> <summary>Potential Write Up</summary>
+
+Across all three active programs, the range of legal events per participant is consistent: each person referred has between 2 and 5 legal events.
+
+Intensive Relief, though designed for individuals facing drug charges, also sees significant overlap with property-related offenses — 7 out of 10 participants are also facing vandalism charges.
+
+Speedy Recovery, another program focused on drug-related offenses, has participants with more diverse legal backgrounds — many are also facing charges for assault, burglary, and theft.
+
+Theft Counseling, while intended for individuals with theft-related charges, also shows charge overlap — 60% of participants are additionally facing vandalism charges, suggesting a pattern of broader property-related offenses.
+
+Because these programs all see a population with a diverse set of charges, that suggests a diverse set of needs. 
 
 </details>
 
 ### 4. ✅ Program Outcomes
+- What is the average outreach time 
+    Hint: This is a new function! `SELECT AVG(JULIANDAY(date1) - JULIANDAY(date2)) AS avg_outreach_days`
+- How many people referred to the program decided to enroll in the program? 
 - How many people have completed each program?
-- How many were referred but have not completed?
-     Hint for writeup: can we draw conclusions about why a person has or hasn't completed a program from this data?
+     Hint for what to add in writeup: can we draw conclusions about why a person has or hasn't completed a program from this data? What does this say about the success of each of the programs?
+
 
 <details> <summary>💡 Starter queries</summary>
 
 ```sql
-SELECT programluid, COUNT(*) AS completions
-FROM programming
-WHERE completiondate IS NOT NULL
-GROUP BY programluid;
 
-SELECT programluid, COUNT(*) AS no_completion
-FROM programming
-WHERE completiondate IS NULL
-GROUP BY programluid;
+SELECT ____ , COUNT(*) AS completions
+...
+WHERE completiondate IS NOT NULL
+GROUP BY lu.name;
+
 ```
 </details>
 
 <details> <summary>Answer queries</summary>
 
 ```sql
-SELECT lu.name, COUNT(*) AS num_completed
+SELECT AVG(JULIANDAY(enrollmentdate) - JULIANDAY(outreachdate)) AS avg_outreach_days 
+FROM programming;
+--note, JULIANDATE is specific to SQLite and is called DATEDIFF elsewhere 
+
+SELECT lu.name, COUNT(*) AS enrollments
 FROM programming p
-JOIN programmingLU lu ON p.programluid = lu.programluid
-WHERE p.completiondate IS NOT NULL
+JOIN programmingLU lu ON lu.programluid = p.programluid
+WHERE enrollmentdate IS NOT NULL
 GROUP BY lu.name;
 
-SELECT lu.name, COUNT(*) AS not_completed
+SELECT lu.name, COUNT(*) AS completions
+FROM programming p
+JOIN programmingLU lu ON lu.programluid = p.programluid
+WHERE completiondate IS NOT NULL
+GROUP BY lu.name;
+
+--see below a more complex way to calculate completion rate using CASE WHEN
+SELECT lu.name,
+  COUNT(CASE WHEN p.completiondate IS NOT NULL THEN 1 END) * 1.0 / COUNT(*) AS completion_rate
 FROM programming p
 JOIN programmingLU lu ON p.programluid = lu.programluid
-WHERE p.completiondate IS NULL
-GROUP BY lu.name;
+GROUP BY lu.name
+ORDER BY completion_rate DESC;
+
 ```
 </details>
 
-### 5.⭐️ Optional Analysis (Challenge)
-- Which program has the highest completion rate?
-- Which program serves the youngest or oldest participants?
+<details> <summary>Potential Write Up</summary>
 
----- note : 2 programs for drugs 
+The average time from referral to outreach across all programs is 20 days.
 
-<details> <summary>💡 Starter query idea</summary>
+In Intensive Relief, 70% (7 out of 10) of eligible participants enrolled, and 50% (5 out of 10) completed the program.
 
--- Completion rate = completions / referrals
--- Use subqueries or join 2 grouped tables on programluid
+In Speedy Recovery, 85% (11 out of 13) enrolled, and 69% (9 out of 13) completed the program.
+
+In Theft Counseling, 100% (5 out of 5) of eligible participants enrolled, and 80% (4 out of 5) completed the program.
 
 </details>
+
+### 5.⭐️ Optional Analysis (Challenge)
+- What can we tell about the population who chose not to complete the program? 
+- Both Intensive Relief and Speedy Recovery target those with drug charges. What makes these programs different? Which is "better"?
+
 
 <details> <summary>Answer queries</summary>
 
@@ -1559,13 +1606,6 @@ FROM programming p
 JOIN programmingLU lu ON p.programluid = lu.programluid
 GROUP BY lu.name
 ORDER BY completion_rate DESC;
-
-SELECT lu.name, AVG(d.age) AS avg_age
-FROM programming p
-JOIN demographics d ON p.personid = d.personid
-JOIN programmingLU lu ON p.programluid = lu.programluid
-GROUP BY lu.name
-ORDER BY avg_age ASC;
 ```
 
 </details>
@@ -1578,14 +1618,19 @@ ORDER BY avg_age ASC;
 4. Who would like to present section 4?
 5. Who would like to present section 5?
 
-6. Did anyone produce a unique takeaway? and if so woudl you like to present?
+6. Did anyone produce a unique takeaway or do one of the optional analysis questions? and if so would you like to present?
 
 7. What findings would you want to make sure to emphasize to the executives/ what stood out?
+
 8. What disclaimers would you want to make about what conclusions are possible to derive from this dataset? 
+
+9. What other sources of data could enrich this analysis more? 
 
 # SQL Class Conclusion 
 
-If you are interested in continuing to learn SQL, some next steps would be exploring the following concepts: `CTEs`, `TEMP TABLES`, `CONCAT`, `PARTITION`, `SUBQUERIES` and more. When you start doing more compelx analyses, you'll naturally start picking some of these things up as you'll look for more efficient ways to complete tasks. But even with a strong foundation in the SQL basics you've learned here, you'll be able to complete pretty thorough analyses. 
+If you are interested in continuing to learn SQL, some next steps would be exploring the following concepts: `CTEs`, `TEMP TABLES`, `CASE WHEN`, `CONCAT`, `PARTITION`, `SUBQUERIES` and more. 
+<br>
+Continuing to learn with SQL will allow you to discover more efficient ways to complete tasks, but even with a strong foundation in the SQL basics you've learned here, you'll be able to complete pretty thorough analyses. 
 
 Online Resources: https://sqliteonline.com/, https://mode.com/sql-tutorial, https://www.datacamp.com/ 
 
@@ -1598,12 +1643,14 @@ Books (both avaliable and affordable on Amazon):
 
 Using ChatGPT: In my experience ChatGPT won't always give you the most efficient ways to answer a SQL question, but it is excellent for troubleshooting typos and generating practice problems. If you give it some context like tables/columns/audience, it can respond pretty well. 
 
-Thank you all! If I can be of help to you in any way don't hesitate to reach out: dylancomerford1@gmail.com 
+Thank you students and thank you for your support Afsana and Jason! 
+<br>
+Students, If I can be of help to you in any way don't hesitate to reach out: dylancomerford1@gmail.com 
 
 ---
 
 git add .
-git commit -m "Update README Teacher"
+git commit -m "Update README for class 3"
 git push origin main
 
 
