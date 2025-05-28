@@ -1285,20 +1285,90 @@ In this lesson we have covered JOINS, HAVING, and CRUD operations. Next class, w
 Closing question: what did you learn and what are you still confused about? 
 
 
+# Welcome to Class 3! 
 
+Review Questions: 
 
+1. What do we need to be sure to include in an `UPDATE` or `DELETE` statement when modifying our databases? 
+
+✅
+Answer:
+The WHERE clause specifies which rows should be updated or deleted. Without it, the command applies to every row in the table.
+
+In an UPDATE statement, forgetting the WHERE clause means all rows will be changed to the new value.
+
+In a DELETE statement, it means you will delete the entire table’s data — which is often irreversible in SQLite.
+
+2. In what format are DATEs stored in SQL?
+
+✅
+`YYYY-MM-DD`
+
+JOIN WARM-UP: 
+
+3. You'd like to view the number of people per charge for each program:  
+
+Your table will have these columns: PROGRAM NAME / CHARGE / PERSON COUNT
+
+✅
+```sql
+SELECT lu.name AS program_name, l.topcharge, COUNT(DISTINCT p.personid) AS person_count
+FROM programming p
+JOIN legalall l ON l.personid = p.personid
+JOIN programmingLU lu ON lu.programluid = p.programluid
+GROUP BY lu.name, l.topcharge;
+```
 
 # Analytics Project 
 
-Scenario: Your office has launched 4 pilot diversion programs. Leadership wants a summary of how these programs are performing and who they’re reaching. Your job is to query the database and create a short, clear report that answers the questions below.
+<pre>Scenario: Your office has launched multiple diversion program pilots. Leadership wants a summary of how these programs are performing and who they’re reaching. Your job is to query the database and create a short, clear report that answers the questions below.
+</pre>
 
-Use the `demographics`, `legalall`, `programming`, and `programmingLU` tables to answer the following (remember you will need to exit the shell and restart using sqlite3 JTCsql.db)
+Instructions: 
+- You will create an analytical report that follows the structure below. You must answer the questions under each heading and please also add one of your own takeaways. 
+- Remeber when you produce an analysis, you usually won't be presenting to people with a technical background. Therefore, you'll need to translate your data findings into a format that is digestible like a paragraph. 
+- You will start by writing a queries to pull numbers and then make a document with your findings. 
+
+Logistics: 
+- You can choose to create one report per person or per group — but everyone should collaborate on the queries and help each other debug. 
+- TAs and I will be available in a separate breakout room and will drop into groups periodically to check in.
+- We will still take both 10-minute breaks: One at 7:30 and one at 8:30 (EST). 
+- At 8:40 (EST), or earlier if groups are finished, we will regroup to discuss. I’ll invite groups to share their findings for each section if they’re comfortable.
+
+Use the `JTCsql.db` database to complete this report. As a reminder: 
+
+SETUP:
+
+1. sqlite3 JTCsql.db 
+2. .headers on 
+3. .mode box 
+
+TABLES:
+
+| Table Name       | Description                                      |
+|------------------|--------------------------------------------------|
+| `demographics`   | One row per person in the dataset                |
+| `legalall`       | One row per legal event — a person may have multiple|
+| `programming`    | One row per person referred to programming       |
+| `programmingLU`  | One row per program, with details                |
+
 
 ### 1. 🧾 Program Overview
-- What are the 4 programs?
-- What charges is each program eligible to serve?
-- How many people have been referred to each program?
 
+ex. 
+When I run the following query: 
+```sql 
+SELECT * FROM programminglu;
+```
+I cans start to write the following takeaway: 
+The 4 programs the offcie is offering include Intensive Relief, Speedy Recovery, Theft Counseling, and ReEnter. Intensive Relief and Speedy Recovery are 2 distinct programs for those facing drug charges and both are offered by hope treatments... 
+
+- What are the programs? 
+- When did each of them start? 
+- What charge must a person have to be eligible for each program? 
+- How many people have been referred to each program? 
+- Along with the charge a participant MUST have to be eligible for a program, what are other common charges people in these programs are facing?
+      
 <details>
 <summary>💡 Starter queries</summary>
 
@@ -1316,15 +1386,28 @@ GROUP BY programluid;
 <summary> Answer queries </summary>
 
 ```sql 
-SELECT DISTINCT name FROM programmingLU;
+SELECT * FROM programmingLU;
 
-SELECT name, chargeseligible FROM programmingLU;
+SELECT lu.name AS program_name, l.topcharge, COUNT(DISTINCT p.personid) AS person_count
+FROM programming p
+JOIN legalall l ON l.personid = p.personid
+JOIN programmingLU lu ON lu.programluid = p.programluid
+GROUP BY lu.name, l.topcharge;
 
 SELECT lu.name, COUNT(*) AS num_referrals
 FROM programming p
 JOIN programmingLU lu ON p.programluid = lu.programluid
 GROUP BY lu.name;
 ```
+</details>
+
+<details>
+<summary> Potential Write Up </summary>
+
+The 4 pilot programs launched by the office include Intensive relief, which serves 
+
+Along with the eligibility charges, there are also the following other common charges, which suggests the need for a winder ranging list of services avalible to participants, who may have more complex needs. 
+
 </details>
 
 ### 2. 👥 Participant Demographics
@@ -1420,6 +1503,7 @@ ORDER BY lu.name, num_cases DESC;
 ### 4. ✅ Program Outcomes
 - How many people have completed each program?
 - How many were referred but have not completed?
+     Hint for writeup: can we draw conclusions about why a person has or hasn't completed a program from this data?
 
 <details> <summary>💡 Starter queries</summary>
 
@@ -1457,6 +1541,8 @@ GROUP BY lu.name;
 - Which program has the highest completion rate?
 - Which program serves the youngest or oldest participants?
 
+---- note : 2 programs for drugs 
+
 <details> <summary>💡 Starter query idea</summary>
 
 -- Completion rate = completions / referrals
@@ -1484,121 +1570,42 @@ ORDER BY avg_age ASC;
 
 </details>
 
-# STOP HERE 
+# Discussion questions:
 
---having and joins
---subqueries 
---making tables (end of this class and beginning of next)
---analytical project (end of next class)
+1. Who would like to present section 1?
+2. Who would like to present section 2?
+3. Who would like to present section 3?
+4. Who would like to present section 4?
+5. Who would like to present section 5?
 
-End with: if you're interested in continuing to learn SQL, the functions I'd reccomend exploring are CTEs, 
+6. Did anyone produce a unique takeaway? and if so woudl you like to present?
 
-```
+7. What findings would you want to make sure to emphasize to the executives/ what stood out?
+8. What disclaimers would you want to make about what conclusions are possible to derive from this dataset? 
 
-select * from programming;
+# SQL Class Conclusion 
 
+If you are interested in continuing to learn SQL, some next steps would be exploring the following concepts: `CTEs`, `TEMP TABLES`, `CONCAT`, `PARTITION`, `SUBQUERIES` and more. When you start doing more compelx analyses, you'll naturally start picking some of these things up as you'll look for more efficient ways to complete tasks. But even with a strong foundation in the SQL basics you've learned here, you'll be able to complete pretty thorough analyses. 
 
+Online Resources: https://sqliteonline.com/, https://mode.com/sql-tutorial, https://www.datacamp.com/ 
 
-for the analytics project: present everything happening with our diversion programs 
+Books (both avaliable and affordable on Amazon):
 
-section one: demographics
+- SQL Queries for Mere Mortals: A hands on Guide to Data Manipulation in SQL 
+       - Software Independent, meaning that what you learn here is transferrable to any RDMS (SQLite, SQL Server etc.)
+- Database Design for Mere Mortals: A hands on Guide to Relational Database Design 
+       - Highly reccomend for those with data engineering goals. Walk you through best practices on designing a database (like making sure every table has a primary key), how to navigate designing a database based on an organization's needs, and some basic SQL
 
-section two: charges 
+Using ChatGPT: In my experience ChatGPT won't always give you the most efficient ways to answer a SQL question, but it is excellent for troubleshooting typos and generating practice problems. If you give it some context like tables/columns/audience, it can respond pretty well. 
 
-section 3: uptake 
-
-section 4: data limitations
-
-section 5: 
-
-```sql
-SELECT * FROM legalall;
---
-SELECT * FROM demographics;
-```
-
-```sql
---
-SELECT * FROM legalall l
-JOIN demographics d ON l.personid = d.personid;
-```
-
-```sql
--- We want all of legalall and just name/age from demographics
-SELECT l.*, d.name, d.age
-FROM legalall l
-JOIN demographics d ON l.personid = d.personid;
-```
-
-```sql
---
-SELECT * FROM demographics d
-JOIN programming p ON d.personid = p.personid;
-```
-
-```sql
--- LEFT JOIN to keep all people, even those not in programming
-SELECT * FROM demographics d
-LEFT JOIN programming p ON d.personid = p.personid;
-```
+Thank you all! If I can be of help to you in any way don't hesitate to reach out: dylancomerford1@gmail.com 
 
 ---
 
-## Summary
-
-You've just walked through a realistic dataset structure using SQL: exploring tables, filtering, joining, and aggregating. The next step is learning how to create your own tables.
-
-
-
-
-
-dylan add: make them be able to make a table 
-
-##making a table using simple data 
-
-##making a table using csv data 
-Let's make your own copy of the demographics table in your new database. Please open this csv file and save a copy to your machine. 
-
-```bash
-https://drive.google.com/file/d/1q3HVU2pb_7mna9ZXz3uO2BkJhf5eYj3f/view?usp=sharing
-```
-
-## Project: Program Analysis 
-
-ASK: An executive at your office would like you to make a presentation on 
-
-Let's explore our other 2 tables: programming and programminglu 
-
-```sql 
-SELECT * FROM programming;
-```
-```sql 
-SELECT * FROM programminglu;
-```
-
-
-
-
-
-
-##making a table using simple data 
-
-##making a table using csv data 
-Let's make your own copy of the demographics table in your new database. Please open this csv file and save a copy to your machine. 
-
-```bash
-https://drive.google.com/file/d/1q3HVU2pb_7mna9ZXz3uO2BkJhf5eYj3f/view?usp=sharing
-```
-
-
-
-git add "README Teacher.md"
+git add .
 git commit -m "Update README Teacher"
 git push origin main
 
-git restore --staged "README Teacher.md"
-git add "README Teacher.md"
-git commit -m "Force-resync README Teacher"
-git push origin main
+
 
 
